@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<!-- quartz -->
+	<!-- 定义任务 -->
+	<bean id="startCleanQuartzJobBean" class="com.unbank.quartz.StartCleanQuartzJobBean">
+		<!-- 间隔时间基数 -->
+		<constructor-arg index="0" value="C:\Users\Administrator\Desktop\imges" />
+	</bean>
+
+	<bean id="startCleanQuartzJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
+		<property name="targetObject" ref="startCleanQuartzJobBean">
+		</property>
+		<!-- 调用类中的方法 -->
+		<property name="targetMethod" value="executeInternal">
+		</property>
+	</bean>
+	<!-- 任务触发器 -->
+	<bean id="startCleanQuartzTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="startCleanQuartzJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>01 01 02 * * ?</value>
+		</property>
+	</bean>
+
+
+
+	<!-- 任务调度入口 -->
+	<bean lazy-init="false"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="startCleanQuartzTrigger" />
+			</list>
+		</property>
+	</bean>
+</beans>

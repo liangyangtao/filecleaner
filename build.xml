@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<project name="filecleaner" default="compile" basedir=".">
+
+	<property name="dest" value="target/classes" />
+	<property name="base.dir" value="." />
+	<property name="lib.dir" value="${base.dir}/lib" />
+	<property name="dist.release.dir" value="target/classes" />
+	<property name="dist.test.dir" value="target/test-classes" />
+	<property name="dist.release.dir.classes" value="target/classes" />
+	<property name="dist.test.dir.classes" value="target/test-classes" />
+
+
+	<!-- step 1 -->
+	<target name="clean">
+		<delete dir="target" />
+	</target>
+
+	<!-- step 2 -->
+	<target name="init" depends="clean">
+		<mkdir dir="${dist.release.dir.classes}" />
+		<mkdir dir="${dist.test.dir.classes}" />
+	</target>
+
+	<!-- step 3 -->
+	<target name="copyfiles" depends="init">
+		<copy todir="${dist.release.dir.classes}">
+			<fileset dir="${base.dir}">
+				<include name="lib/" />
+			</fileset>
+			<fileset dir="${base.dir}/src/main/resources">
+				<include name="*.xml" />
+				<include name="*.properties" />
+				<include name="*.bat" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist.test.dir.classes}">
+			<fileset dir="${base.dir}">
+				<include name="lib/" />
+			</fileset>
+			<fileset dir="${base.dir}/src/main/resources">
+				<include name="*.xml" />
+				<include name="*.properties" />
+				<include name="config/" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<!-- step 4 -->
+	<target name="compile" depends="copyfiles">
+
+		<javac srcdir="src/main/java" destdir="${dist.release.dir.classes}" encoding="utf-8"  includeantruntime="on" >
+			<classpath refid="compile.classpath" />
+		</javac>
+
+		<javac srcdir="src/main/java" destdir="${dist.test.dir.classes}" encoding="utf-8"  includeantruntime="on" >
+			<classpath refid="compile.classpath" />
+		</javac>
+
+	</target>
+
+	<path id="compile.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+</project>
